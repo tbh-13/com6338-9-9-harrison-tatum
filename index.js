@@ -11,8 +11,14 @@ const makeTag = tag => str => `<${tag}>${str}</${tag}>`
 // complete this function
 const makePoemHTML = (data) => {
   const poem = data[0]
-  const titleHTML = `<h2>${poem.title}</h2>`
-  const authorHTML = `<h3><em>by ${poem.author}</em></h3>`
+
+  const h2 = makeTag('h2')
+  const h3 = makeTag('h3')
+  const em = makeTag('em')
+  const p = makeTag('p')
+
+  const titleHTML = h2(poem.title)
+  const authorHTML = h3(em(`by ${poem.author}`))
   // stanzas
   const stanzas = []
   let current = []
@@ -27,12 +33,14 @@ const makePoemHTML = (data) => {
       current.push(line)
     }
   })
-
-  if (current.length) {
-    stanzas.push(current)
-  }
+  if (current.length) stanzas.push(current)
+  
   // convert stanzas to <p> with breaks
-  const stanzaHTML = stanzas.map(stanza => `<p>${stanza.join('<br/>')}</p>`).join('')
+  const stanzaHTML = pipe(
+    arr => arr.map(stanza => stanza.join('<br>')),
+    arr => arr.map(p),
+    arr => arr.join('')
+  )(stanzas)
   return `${titleHTML}${authorHTML}${stanzaHTML}`
 }
 
